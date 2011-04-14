@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="safeHtml" uri="http://www.bazageous.com/safeHtml" %>
 <html>
 <head>
     <title>OWASP antisamy demo</title>
@@ -26,6 +27,12 @@
         html formatting, for instance using a rich text editor like
         <a href="http://tinymce.moxiecode.com/index.php">tinymce</a>
     </li>
+    <li>
+        <h5>Using anti-samy during rendering using a custom JSP tag:</h5>
+        Escape only content that is deemed dangerous by the anti-samy policy. This approach
+        makes it easy to use different policy files for different use-cases. See the JSP source code for an example.
+        We can configure the policy to allow certain types of HTML formatting.
+    </li>
 </ol>
 
 <form method="post" action="./index.jsp">
@@ -42,6 +49,7 @@
 </form>
 
 <c:if test="${not empty param.submit}">
+    <c:set var="originalInput" value="${pageContext.request.originalRequest.parameterMap['sampleTextInput'][0]}"/>
     <h3>Redisplaying submitted contents to user</h3>
     <ol>
         <li>
@@ -52,11 +60,25 @@
         <li>
             <h5>Output using method 2:
                 '<span class="output">
-                        <c:out value="${pageContext.request.originalRequest.parameterMap['sampleTextInput'][0]}"/>
+                        <c:out value="${originalInput}"/>
                 </span>'
             </h5>
             The dangerous content is escaped using &lt;c:out&gt, rendering it without modification. Note that this
             won't allow HTML formatting, using e.g. a rich text editor, as the formatting will be escaped too.
+        </li>
+        <li>
+            <h5>
+                Using <c:out value="<safeHtml:out/>"/> tag:
+                '<span class="output"><safeHtml:out text="${originalInput}"/></span>'
+            </h5>
+        </li>
+        <li>
+            <h5>
+                Using <c:out value="<safeHtml:out/>"/> tag with antisamy-anythinggoes.xml:
+                <span class="output">
+                    '<safeHtml:out text="${originalInput}" policyFile="antisamy-anythinggoes.xml"/>'
+                </span>
+            </h5>
         </li>
     </ol>
 

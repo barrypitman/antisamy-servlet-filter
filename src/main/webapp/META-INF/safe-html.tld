@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://java.sun.com/xml/ns/javaee
+        http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
+
+    <display-name>Render HTML-formatted text, using AntiSamy to purify the text</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>safehtml</short-name>
+    <uri>http://www.bazageous.com/safeHtml</uri>
+
+    <tag>
+        <name>out</name>
+        <tag-class>bazagious.SafeHtmlTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description>The text to display</description>
+            <name>text</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>
+                Name of the policy file to use (loaded from classpath). If not supplied, the default
+                policy 'antisamy-default.xml' will be used.
+            </description>
+            <name>policyFile</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+</taglib>

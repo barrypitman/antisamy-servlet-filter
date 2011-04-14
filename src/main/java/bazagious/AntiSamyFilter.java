@@ -35,7 +35,7 @@ public class AntiSamyFilter implements Filter {
 
     public AntiSamyFilter() {
         try {
-            URL url = this.getClass().getClassLoader().getResource("antisamy-slashdot-1.4.4.xml");
+            URL url = this.getClass().getClassLoader().getResource("antisamy-default.xml");
             Policy policy = Policy.getInstance(url.getFile());
             antiSamy = new AntiSamy(policy);
         } catch (PolicyException e) {
