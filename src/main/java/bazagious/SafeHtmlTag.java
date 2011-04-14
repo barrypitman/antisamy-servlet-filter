@@ -10,6 +10,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * JSP tag that renders AntiSamy-filtered HTML, useful for displaying HTML markup in a safe way.
@@ -22,6 +24,7 @@ public class SafeHtmlTag extends TagSupport {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(SafeHtmlTag.class);
     private static final AntiSamy DEFAULT_ANTI_SAMY;
+    private static final Map<String, Policy> POLICY_CACHE = new ConcurrentHashMap<String, Policy>();
 
     static {
         DEFAULT_ANTI_SAMY = new AntiSamy(loadPolicy("antisamy-default.xml"));
@@ -63,13 +66,18 @@ public class SafeHtmlTag extends TagSupport {
     }
 
     private static Policy loadPolicy(String name) {
+        if (POLICY_CACHE.containsKey(name)) {
+            return POLICY_CACHE.get(name);
+        }
         try {
             LOG.debug("Loading policy file '" + name + "' from classpath");
             URL url = SafeHtmlTag.class.getClassLoader().getResource(name);
             if (url == null || url.getFile() == null) {
                 throw new FileNotFoundException("classpath file '" + name + "' was not found!");
             }
-            return Policy.getInstance(url.getFile());
+            Policy loadedPolicy = Policy.getInstance(url.getFile());
+            POLICY_CACHE.put(name, loadedPolicy);
+            return loadedPolicy;
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
