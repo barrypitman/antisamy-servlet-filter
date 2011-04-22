@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
-import org.owasp.validator.html.PolicyException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -16,19 +15,15 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * JSP tag that renders AntiSamy-filtered HTML, useful for displaying HTML markup in a safe way.
  *
- * @author barry
+ * @author barry pitman
  * @since 2011/04/14 1:26 PM
  */
 public class SafeHtmlTag extends TagSupport {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(SafeHtmlTag.class);
-    private static final AntiSamy DEFAULT_ANTI_SAMY;
+    private static final AntiSamy DEFAULT_ANTI_SAMY = new AntiSamy(loadPolicy("antisamy-default.xml"));
     private static final Map<String, Policy> POLICY_CACHE = new ConcurrentHashMap<String, Policy>();
-
-    static {
-        DEFAULT_ANTI_SAMY = new AntiSamy(loadPolicy("antisamy-default.xml"));
-    }
 
     private String text;
     private String policyFile;
